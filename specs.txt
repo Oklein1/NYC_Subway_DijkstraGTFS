@@ -1,0 +1,38 @@
+ Part I
+
+Goal: To visualize just NYC subway points and line data using D3
+
+1) Transform GTFS into json
+2) generate map
+3) colors, labels, small interaction (click and print station name)
+
+
+Part II
+
+Goal: To visualize and compute shortest path Algo
+
+4) Shortest Path analysis
+
+
+
+Part III: Make MultiMode
+
+
+
+Appendix: Maintainability (DataBase)
+
+
+Appendix: Rewrite everything in ClojureScript
+
+
+
+
+
+
+
+
+
+
+
+Edited:
+Nov 20 2020 - Created spec.txt
