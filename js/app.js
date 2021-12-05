@@ -77,13 +77,15 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
       return;
     }
 
-    // ---------------------------------
     // EVENT DRIVEN DIJKSTRA ALGO
     // input for Dijkstra algo
+
+    console.log(subway1Train)
+
+
     const startLngLat = station.features.find(stop => {
-      const {
-        stop_id
-      } = stop.properties;
+      console.log(stop.properties)
+      const {stop_id} = stop.properties;
       return stop_id === prevStartId;
     }).geometry.coordinates;
 
@@ -129,7 +131,7 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
       getStopInfoFromPath(dijkstra(testProblem).path, stop_id)
     })
 
-    // locally scoped function 
+    // locally event-driven function 
     function getStopInfoFromPath(nodes, stops) {
       const filteredForStops = stops.filter(row => nodes.includes(row.fstop_id))
       //console.log(filteredForStops)
@@ -254,6 +256,7 @@ function drawMap(station, route, borough) {
 }
 
 function getColorAndGroup(routes, color_or_group) {
+  // the hell was i thinking? DELETE??
   // color === 'c'
   // group === 'g'
   colors = [];
