@@ -6,13 +6,14 @@ const mapContainer = d3.select("#map");
 
 const width = mapContainer.node().offsetWidth,
   height = mapContainer.node().offsetHeight,
-  padding = 20;
+  padding = 150;
 //console.log(height, width)
+
 
 svg = mapContainer
   .append("svg")
-  .attr("width", width - padding)
-  .attr("height", height - padding)
+  .attr("width", width + padding)
+  .attr("height", height + padding)
   .style("top", 40) // 40 pixels from the top
   .style("left", 30); // 30 pixels from the left
 
@@ -29,21 +30,26 @@ const stop_ids_promise = d3.csv("./data/stop_ids.csv");
 
 Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data => {
   const [station, route, borough, subway1Train] = data;
+
+  const redLineSubway = station.features.filter(stop => {
+    return stop.properties.trains === '1' || stop.properties.trains === '2' || stop.properties.trains === '3' ||stop.properties.trains === '2 3' || stop.properties.trains === '1 2 3'
+    })
   drawMap(station, route, borough);
 
-  //console.log(subway1Train) // KEEP EYE HERE
+  //console.log(station) // KEEP EYE HERE
 
   //inputs
   const startInput = document.getElementById("start-input");
   const endInput = document.getElementById("end-input");
-  dropDownMenuStops(subway1Train, startInput); // changed from station.features
-  dropDownMenuStops(subway1Train, endInput); // changed from station.features
+  dropDownMenuStops(subway1Train, startInput, redLineSubway); // changed from station.features
+  dropDownMenuStops(subway1Train, endInput, redLineSubway); // changed from station.features
 
 
 
   // DROPDOWN MENU CONFIGS
   let prevStartId = null;
   let prevEndId = null;
+
 
   startInput.addEventListener("change", e => {
     const stop_id = e.target.value;
@@ -80,23 +86,27 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
     // EVENT DRIVEN DIJKSTRA ALGO
     // input for Dijkstra algo
 
-    console.log(subway1Train)
+    // working on this 
+    // EVENT DRIVEN DIJKSTRA ALGO
+    // input for Dijkstra algo
 
 
-    const startLngLat = station.features.find(stop => {
-      console.log(stop.properties)
-      const {stop_id} = stop.properties;
+    const startNodeID = redLineSubway.find(stop => {
+      //console.log(stop.properties)
+      const {
+        stop_id
+      } = stop.properties;
       return stop_id === prevStartId;
-    }).geometry.coordinates;
+    }).properties.stop_id
 
-    const endLngLat = station.features.find(stop => {
+    const endNodeID = redLineSubway.find(stop => {
       const {
         stop_id
       } = stop.properties;
       return stop_id === prevEndId;
-    }).geometry.coordinates;
+    }).properties.stop_id
 
-    console.log(startLngLat, endLngLat);
+    console.log(startNodeID, endNodeID);
 
 
 
@@ -114,7 +124,7 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
       }, {})
       //console.log(network)
 
-      const startNode = '101S' // change this you fuk
+      const startNode = '101S' // ACHTUNG: Change this
       const endNode = '139S'
 
       const testProblem = {
@@ -285,7 +295,23 @@ function getColorAndGroup(routes, color_or_group) {
 }
 
 
-function dropDownMenuStops(stops, input) {
+function dropDownMenuStops(stops, input, redline) {
+  console.log(redline)
+
+  // const uptownTravel = stops.filter(stops => {
+  //   const {fstop_id, fstop_name} = stops
+  //   //console.log(fstop_id)
+  //   return fstop_id.includes('N')
+  // })
+
+  // const downtownTravel = stops.filter(stops => {
+  //   const {fstop_id, fstop_name} = stop
+  //   return fstop_id.includes('S')
+  // })
+
+  //console.log(uptownTravel)
+
+
   const stopOptions = stops
     .map(stop => {
       const {
@@ -302,6 +328,7 @@ function dropDownMenuStops(stops, input) {
   stopOptions.forEach(stop => {
     //console.log(stop.id)
     if (!(stop['id'].includes('N') | (stop['id'].includes('S')))) {
+      //console.log(stop)
       const optionObj = document.createElement("option");
       optionObj.textContent = stop.name;
       optionObj.value = stop.id;
@@ -310,4 +337,3 @@ function dropDownMenuStops(stops, input) {
   });
 
 }
-
