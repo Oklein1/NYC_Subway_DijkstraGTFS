@@ -1,4 +1,4 @@
- Part I
+Part I
 
 Goal: To visualize just NYC subway points and line data using D3
 

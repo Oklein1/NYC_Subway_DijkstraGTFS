@@ -1,12 +1,14 @@
+// CONSTANTS
+
+
+// construct map dimension & add svg element to map div
 const mapContainer = d3.select("#map");
 
-// determine width and height
 const width = mapContainer.node().offsetWidth,
   height = mapContainer.node().offsetHeight,
   padding = 20;
-console.log(height, width)
+//console.log(height, width)
 
-// create and append a new SVG element to the map div
 svg = mapContainer
   .append("svg")
   .attr("width", width - padding)
@@ -14,43 +16,32 @@ svg = mapContainer
   .style("top", 40) // 40 pixels from the top
   .style("left", 30); // 30 pixels from the left
 
-// request our data files and reference with variables
 
+
+// request our data files and reference with variables
 const stationGeoJson = d3.json("./data/stops.geojson");
 const routeGeoJson = d3.json("./data/routes.geojson");
 const borough = d3.json("./data/boroughs.geojson");
 
-Promise.all([stationGeoJson, routeGeoJson, borough]).then(data => {
-  const [station, route, borough] = data;
+// constants for dijkstra's shortest path
+const to_from_stops_promise = d3.csv("./data/to_from_stop_ids.csv");
+const stop_ids_promise = d3.csv("./data/stop_ids.csv");
+
+Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data => {
+  const [station, route, borough, subway1Train] = data;
   drawMap(station, route, borough);
 
-  //inputs
+  //console.log(subway1Train) // KEEP EYE HERE
 
+  //inputs
   const startInput = document.getElementById("start-input");
   const endInput = document.getElementById("end-input");
-  dropDownMenuStops(station.features, startInput);
-  dropDownMenuStops(station.features, endInput);
+  dropDownMenuStops(subway1Train, startInput); // changed from station.features
+  dropDownMenuStops(subway1Train, endInput); // changed from station.features
 
-  function dropDownMenuStops(stops, input) {
-    const stopOptions = stops
-      .map(stop => {
-        const { stop_id, stop_name, trains } = stop.properties;
 
-        return {
-          id: stop_id,
-          name: `${stop_name}; ${trains}`
-        };
-      })
-      .sort();
 
-    stopOptions.forEach(stop => {
-      const optionObj = document.createElement("option");
-      optionObj.textContent = stop.name;
-      optionObj.value = stop.id;
-      input.appendChild(optionObj);
-    });
-  }
-
+  // DROPDOWN MENU CONFIGS
   let prevStartId = null;
   let prevEndId = null;
 
@@ -78,6 +69,7 @@ Promise.all([stationGeoJson, routeGeoJson, borough]).then(data => {
   const errorText = document.getElementById("error");
 
   submitButton.addEventListener("click", () => {
+
     errorText.innerText = "";
 
     if (prevStartId === prevEndId) {
@@ -85,22 +77,69 @@ Promise.all([stationGeoJson, routeGeoJson, borough]).then(data => {
       return;
     }
 
-    //find LngLat of start and end
+    // ---------------------------------
+    // EVENT DRIVEN DIJKSTRA ALGO
+    // input for Dijkstra algo
     const startLngLat = station.features.find(stop => {
-      const { stop_id } = stop.properties;
+      const {
+        stop_id
+      } = stop.properties;
       return stop_id === prevStartId;
     }).geometry.coordinates;
 
     const endLngLat = station.features.find(stop => {
-      const { stop_id } = stop.properties;
+      const {
+        stop_id
+      } = stop.properties;
       return stop_id === prevEndId;
     }).geometry.coordinates;
 
     console.log(startLngLat, endLngLat);
-    
-    
-  
-    
+
+
+
+    // promise for ShortestPath
+    Promise.all([stop_ids_promise, to_from_stops_promise]).then(data => {
+      const [stop_id, to_from_stops] = data;
+      //console.log(to_from_stops)
+
+      const network = to_from_stops.reduce((network, item) => {
+        network[item['fstop']] = {
+          [item['tstop']]: 1
+        }
+
+        return network
+      }, {})
+      //console.log(network)
+
+      const startNode = '101S' // change this you fuk
+      const endNode = '139S'
+
+      const testProblem = {
+        ...network,
+        start: {
+          [startNode]: 0
+        },
+        finish: {}
+      }
+      testProblem[endNode]['finish'] = 0
+
+      //console.log(dijkstra(testProblem));
+      //console.log(stop_id)
+      getStopInfoFromPath(dijkstra(testProblem).path, stop_id)
+    })
+
+    // locally scoped function 
+    function getStopInfoFromPath(nodes, stops) {
+      const filteredForStops = stops.filter(row => nodes.includes(row.fstop_id))
+      //console.log(filteredForStops)
+      const sortedStops = filteredForStops.sort((a, b) => nodes.indexOf(a.fstop_id) - nodes.indexOf(b.fstop_id))
+
+      return sortedStops
+    }
+
+
+
   });
 });
 
@@ -123,7 +162,7 @@ function drawMap(station, route, borough) {
   const path = d3.geoPath().projection(projection);
 
   function handleZoom(e) {
-    console.log("zoom");
+    //console.log("zoom");
     svg.selectAll("path").attr("transform", e.transform);
     svg.selectAll("circle")
       .attr("r", 5 / e.transform.k)
@@ -150,7 +189,7 @@ function drawMap(station, route, borough) {
     .join("path") // not generating path elements
     .attr("d", path)
     .classed("route", true) // give each path elem a class name
-    .style("stroke", function(d) {
+    .style("stroke", function (d) {
       return d.properties.color;
     })
     .style("stroke-width", 2);
@@ -163,13 +202,13 @@ function drawMap(station, route, borough) {
     .data(station.features)
     .join('circle')
     .attr('cx', d => {
-        p = d.properties
-        d.position = projection([p.stop_lon, p.stop_lat]);
-        return d.position[0];
-      })
+      p = d.properties
+      d.position = projection([p.stop_lon, p.stop_lat]);
+      return d.position[0];
+    })
     .attr('cy', d => {
-        return d.position[1];
-      })
+      return d.position[1];
+    })
     .attr('r', 5)
     // .join("path")
     // .attr("d", path)
@@ -241,3 +280,31 @@ function getColorAndGroup(routes, color_or_group) {
     console.log('use either "c" for color or "g" for group');
   }
 }
+
+
+function dropDownMenuStops(stops, input) {
+  const stopOptions = stops
+    .map(stop => {
+      const {
+        fstop_id,
+        fstop_name,
+      } = stop; // may need to have condition for null
+      return {
+        id: fstop_id,
+        name: fstop_name
+      };
+    }).sort();
+
+
+  stopOptions.forEach(stop => {
+    //console.log(stop.id)
+    if (!(stop['id'].includes('N') | (stop['id'].includes('S')))) {
+      const optionObj = document.createElement("option");
+      optionObj.textContent = stop.name;
+      optionObj.value = stop.id;
+      input.appendChild(optionObj);
+    }
+  });
+
+}
+
