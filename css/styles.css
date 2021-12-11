@@ -1,102 +1,216 @@
 body {
-  font-family: "Open Sans", sans-serif;
-  font-size: 1.1rem;
-  line-height: 1.8rem;
-  font-weight: 300;
+    font-family: "Open Sans", sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.8rem;
+    font-weight: 300;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
-  color: whitesmoke;
-  font-weight: 700;
+    color: white-smoke;
+    font-weight: 700;
 }
 
 .dropbtn {
-  background-color: #ff8533;
-  color: white;
-  padding: 16px;
-  font-size: 17px;
-  border: none;
-  cursor: pointer;
+    background-color: #ff8533;
+    color: white;
+    padding: 16px;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
 }
+
 
 /* The container <div> - needed to position the dropdown content */
+
 .dropdown {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
+
 
 /* Dropdown Content (Hidden by Default) */
+
 .dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
 }
+
 
 /* Links inside the dropdown */
+
 .dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
 }
+
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1
+}
+
 
 /* Show the dropdown menu on hover */
+
 .dropdown:hover .dropdown-content {
-  display: block;
+    display: block;
 }
+
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
+
 .dropdown:hover .dropbtn {
-  background-color: #ff8533;
+    background-color: #ff8533;
 }
 
-
-
 .route {
-  fill: none;
-  stroke: #ff0011;
-  stroke-width: 2;
+    fill: none;
+    stroke: #ff0011;
+    stroke-width: 2;
 }
 
 .station {
-  fill: #ffffff50;
-  stroke: #757575;
-  vector-effect: non-scaling-stroke;
+    fill: #ffffff50;
+    stroke: #757575;
+    vector-effect: non-scaling-stroke;
 }
 
-.boroughs{
-  fill: #86868681;
-  stroke: #000000;
-  vector-effect: non-scaling-stroke;
+.boroughs {
+    fill: #86868681;
+    stroke: #000000;
+    vector-effect: non-scaling-stroke;
 }
 
 .station:hover {
-  fill: #aaaaaa9c;
-  stroke: #16161693;
-  stroke-width: 2;  
-  padding-bottom: 12;
-  vector-effect: non-scaling-stroke;
+    fill: #aaaaaa9c;
+    stroke: #16161693;
+    stroke-width: 2;
+    padding-bottom: 12;
+    vector-effect: non-scaling-stroke;
 }
 
 #map {
-  border-bottom: 2px solid rgb(39, 0, 63);
-  width: 100%;
-  height: 100%;
+    border-bottom: 2px solid rgb(39, 0, 63);
+    width: 100%;
+    height: 100%;
 }
 
 @media screen and (min-width: 768px) {
-  #map {
-    border-bottom: none;
-  }
-
+    #map {
+        border-bottom: none;
+    }
 }
 
-#error{
-  color:red;
+#error {
+    color: red;
+}
+
+
+/* Timeline */
+
+.timeline {
+    position: relative;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.timeline ul li {
+    margin-bottom: 50px;
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.point {
+    min-width: 20px;
+    height: 20px;
+    background-color: #be9fe1;
+    border-radius: 100%;
+    z-index: 2;
+    border: 3px #333333 solid;
+    position: relative;
+    left: 1px;
+}
+
+.timeline ul li .content {
+    width: 50%;
+    padding: 0 20px;
+}
+
+.timeline ul li:nth-child(odd) .content {
+    padding-left: 0;
+}
+
+.timeline ul li:nth-child(odd) .date {
+    padding-right: 0;
+}
+
+.timeline ul li:nth-child(even) .content {
+    padding-right: 0;
+}
+
+.timeline ul li:nth-child(even) .date {
+    padding-left: 0;
+}
+
+.timeline ul li .date {
+    width: 50%;
+    padding: 0 20px;
+    font-weight: normal;
+}
+
+.timeline ul li .date h4 {
+    background-color: #e1ccec;
+    width: 100px;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.timeline ul li .content h3 {
+    padding: 10px 20px;
+    background-color: #be9fe1;
+    margin-bottom: 0;
+    text-align: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.timeline ul li .content p {
+    padding: 10px 20px;
+    background-color: #e1d9ec;
+    margin-top: 0;
+    text-align: center;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.timeline ul li:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+.timeline ul li:nth-child(even) .date h4 {
+    float: right
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 3px;
+    left: 50%;
+    background-color: #333333;
 }
