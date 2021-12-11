@@ -8,7 +8,7 @@ const width = mapContainer.node().offsetWidth,
     height = mapContainer.node().offsetHeight,
     padding = 150;
 //console.log(height, width)
-
+let projection = null
 
 svg = mapContainer
     .append("svg")
@@ -97,7 +97,6 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
 
     })
 
-
     submitButton.addEventListener("click", () => {
 
         errorText.innerText = "";
@@ -106,6 +105,7 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
             errorText.innerText = "Same Station";
             return;
         }
+
 
         //if station is north set to northNetwork, otherwise set to South
         let direction = ((+prevStartId) - (+prevEndId) > 0) ? 'N' : 'S'
@@ -149,6 +149,21 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
                       </li>`).join('')
         document.getElementById('timeline-content').innerHTML = pathHTML
 
+        console.log(path, station.features)
+
+        svg.selectAll(".path-station").remove()
+
+        svg
+            .append("g")
+            .selectAll("path")
+            .data(path)
+            .join('circle')
+            .attr('cx', d => projection([d.fstop_lon, d.fstop_lat])[0])
+            .attr('cy', d => projection([d.fstop_lon, d.fstop_lat])[1])
+            .attr('r', 5)
+            .attr('fill', 'orange')
+            .attr('class', 'path-station');
+
     });
 });
 
@@ -161,7 +176,7 @@ function drawMap(station, route, borough) {
     //const groups = getColorAndGroup(route, 'g')
 
     // projection
-    const projection = d3
+    projection = d3
         .geoConicConformal()
         .parallels([40 + 40 / 60, 41 + 2 / 60])
         .rotate([74, 0])
@@ -223,7 +238,14 @@ function drawMap(station, route, borough) {
         // .attr("d", path)
         // .attr("r", 50)
         .attr("id", d => `stop-${d.properties.stop_id}`)
-        .attr("class", "station");
+        .attr("class", "station")
+        // .attr("fill", d => {
+        //     if (d.properties.stop_id in path){
+        //         return 'orange'
+        //     }else{
+        //         return null
+        //     }
+        // })
 
     // visual affordance, dynamic tooltip
     const tooltip = d3
