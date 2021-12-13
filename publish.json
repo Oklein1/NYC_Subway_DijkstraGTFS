@@ -1,11 +1,7 @@
 {
-  // Required properties
-  "title": "Title of Project", // Give your project a good title
+  "title": "Title of Project", 
   "info": "This project visualizes NYC's GTFS subway data. The NYC 1train is used as a proof-of-concept for Dijkstra's shortest path algorithm.", 
-  "coordinates": [40.776676, -73.971321], // IMPORTANT: the lat, long centerpoint of your project
-
-  // Optional properties
-  // If you don't want to use these, use the value null without quotes.
-  "author": "Ofir Klein", // What handle do you want to use?
+  "coordinates": [40.776676, -73.971321],
+  "author": "Ofir Klein",
   "link": "https://oklein1.github.io/NYC_Subway_DijkstraGTFS/"
 }
