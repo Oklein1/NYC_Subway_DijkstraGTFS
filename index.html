@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="col-md-7 flex">
-            <div>
+            <div id="controls">
                 <select id="start-input">
               <option>Start Stop</option>
             </select>
@@ -40,9 +40,9 @@
                 <button id="submit-input">
               Get Path
             </button>
-                <p id="error">
+                <span id="error">
 
-                </p>
+                </span>
             </div>
             <div id="map"></div>
         </div>
@@ -64,6 +64,7 @@
 <script src="https://unpkg.com/topojson@3"></script>
 
 <!-- load the utility function to resize map container -->
+<script src="./js/utilities.js"></script>
 <script src="./js/app.js"></script>
 <script src="./js/graph_construction.js"></script>
 
