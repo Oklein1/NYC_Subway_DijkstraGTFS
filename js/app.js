@@ -12,10 +12,10 @@ let projection = null
 
 svg = mapContainer
     .append("svg")
-    .attr("width", width + padding)
-    .attr("height", height + padding)
-    .style("top", 40) // 40 pixels from the top
-    .style("left", 30); // 30 pixels from the left
+    .attr("width", width)
+    .attr("height", height)
+    .style("top", 0) // 40 pixels from the top
+    .style("left", 0); // 30 pixels from the left
 
 
 
@@ -180,7 +180,7 @@ function drawMap(station, route, borough) {
         .geoConicConformal()
         .parallels([40 + 40 / 60, 41 + 2 / 60])
         .rotate([74, 0])
-        .fitSize([width, height], station);
+        .fitSize([width - 10, height - 10], borough);
 
     // path generator
     const path = d3.geoPath().projection(projection);
