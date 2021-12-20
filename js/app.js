@@ -96,7 +96,10 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
 
     })
 
-    let totalTrip = []; // handle state of trips
+    //let totalTrip = []; // handle state of trips
+
+    let testProblem = {}
+    
 
     submitButton.addEventListener("click", () => {
 
@@ -117,6 +120,7 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
         const startNode = prevStartId + direction
         const endNode = prevEndId + direction
 
+
         const testProblem = {
             ...network,
             start: {
@@ -129,11 +133,8 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
 
         const path = getStopInfoFromPath(dijkstra(testProblem).path, global_stop_id)
 
-        console.log(path)
 
-        const pathHTML = path.map(({
-            fstop_name
-        }) => `
+        const pathHTML = path.map(({fstop_name}) => `
                         <li>
                         <div class="content">
                         <h3>${fstop_name}</h3>
@@ -157,6 +158,9 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
             .attr('r', 5)
             .attr('fill', 'orange')
             .attr('class', 'path-station');
+
+    
+        delete testProblem[endNode]['finish'];
 
     });
 });
