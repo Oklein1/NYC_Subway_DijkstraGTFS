@@ -1,5 +1,5 @@
 {
-  "title": "Title of Project", 
+  "title": "New York City Subway Travel", 
   "info": "This project visualizes NYC's GTFS subway data. The NYC 1train is used as a proof-of-concept for Dijkstra's shortest path algorithm.", 
   "coordinates": [40.776676, -73.971321],
   "author": "Ofir Klein",

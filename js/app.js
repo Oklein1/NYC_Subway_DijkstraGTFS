@@ -38,7 +38,6 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
 
 
 
-    //console.log(station) // KEEP EYE HERE
 
     //inputs
     const startInput = document.getElementById("start-input");
@@ -97,6 +96,11 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
 
     })
 
+    //let totalTrip = []; // handle state of trips
+
+    let testProblem = {}
+    
+
     submitButton.addEventListener("click", () => {
 
         errorText.innerText = "";
@@ -116,6 +120,7 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
         const startNode = prevStartId + direction
         const endNode = prevEndId + direction
 
+
         const testProblem = {
             ...network,
             start: {
@@ -125,31 +130,21 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
         }
         testProblem[endNode]['finish'] = 0
 
-        //console.log(dijkstra(testProblem));
-        //console.log(stop_id)
-
-        // locally event-driven function 
-        function getStopInfoFromPath(nodes, stops) {
-            const filteredForStops = stops.filter(row => nodes.includes(row.fstop_id))
-                //console.log(filteredForStops)
-            const sortedStops = filteredForStops.sort((a, b) => nodes.indexOf(a.fstop_id) - nodes.indexOf(b.fstop_id))
-
-            return sortedStops
-        }
 
         const path = getStopInfoFromPath(dijkstra(testProblem).path, global_stop_id)
 
-        const pathHTML = path.map(({ fstop_name }) => `
+
+        const pathHTML = path.map(({fstop_name}) => `
                         <li>
                         <div class="content">
-                          <h3>${fstop_name}</h3>
-                          <p>Event 3 Description</p>
+                        <h3>${fstop_name}</h3>
                         </div>
                         <div class="point"></div>
-                      </li>`).join('')
+                        </li>`).join('')
         document.getElementById('timeline-content').innerHTML = pathHTML
 
-        console.log(path, station.features)
+
+        //console.log(path, station.features)
 
         svg.selectAll(".path-station").remove()
 
@@ -163,6 +158,9 @@ Promise.all([stationGeoJson, routeGeoJson, borough, stop_ids_promise]).then(data
             .attr('r', 5)
             .attr('fill', 'orange')
             .attr('class', 'path-station');
+
+    
+        delete testProblem[endNode]['finish'];
 
     });
 });
@@ -213,7 +211,7 @@ function drawMap(station, route, borough) {
         .join("path") // not generating path elements
         .attr("d", path)
         .classed("route", true) // give each path elem a class name
-        .style("stroke", function(d) {
+        .style("stroke", function (d) {
             return d.properties.color;
         })
         .style("stroke-width", 2);
@@ -239,13 +237,13 @@ function drawMap(station, route, borough) {
         // .attr("r", 50)
         .attr("id", d => `stop-${d.properties.stop_id}`)
         .attr("class", "station")
-        // .attr("fill", d => {
-        //     if (d.properties.stop_id in path){
-        //         return 'orange'
-        //     }else{
-        //         return null
-        //     }
-        // })
+    // .attr("fill", d => {
+    //     if (d.properties.stop_id in path){
+    //         return 'orange'
+    //     }else{
+    //         return null
+    //     }
+    // })
 
     // visual affordance, dynamic tooltip
     const tooltip = d3
@@ -318,7 +316,10 @@ function getColorAndGroup(routes, color_or_group) {
 function getOneTrainStops(redline) {
     const oneTrain = redline.map(stop => {
         const prop = stop.properties
-        const { stop_id, stop_name } = prop
+        const {
+            stop_id,
+            stop_name
+        } = prop
 
         //console.log(stop_id)
         prop["stop_id_N"] = stop_id + "N"
@@ -356,7 +357,13 @@ function dropDownMenuStops(stops, input, redline) {
 
 
 
+function getStopInfoFromPath(nodes, stops) {
+        const filteredForStops = stops.filter(row => nodes.includes(row.fstop_id))
+        //console.log(filteredForStops)
+        const sortedStops = filteredForStops.sort((a, b) => nodes.indexOf(a.fstop_id) - nodes.indexOf(b.fstop_id))
 
+        return sortedStops
+    }
 
 
     // LEGACY CODE:
