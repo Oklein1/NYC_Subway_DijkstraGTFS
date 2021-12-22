@@ -5,7 +5,7 @@ This project visualizes NYC's GTFS subway data. The point of this visualization 
 ## Methodology (High-level):
 To transform GTFS text files into mauable information, I first used Python's Pandas library. For this proof of concept, I arbitarily chose New York City's 1 train. Using the <i>stop.txt</i> and the <i>stoptimes.txt</i> files, I filtered the data by choosing a day of the week (Sunday), and therefrom extracted the 1 train's schedule. To reduce the complexity of the problem for this proof of concept, I decided to abstract time out of the model in order to focus on connectivity. 
 
-Once this process was complete, the Pandas DataFrame turned into a Geopandas DataFrame, then was exported as a <i>.geojson</> file. Additionally I also located a <i>.geojson</> file visualizing New York City's Borough Boundaries. Doing so gives the visualization a sense of local. 
+Once this process was complete, the Pandas DataFrame turned into a Geopandas DataFrame, then was exported as a <i>.geojson</i> file. Additionally I also located a <i>.geojson</i> file visualizing New York City's Borough Boundaries. Doing so gives the visualization a sense of local. 
 
 With the data ready, the graph was build using the source code of Albertorestifo's node-dijkstra algorithm. What remained was visualizing the graph, the trips taken along the subway, and an interface where users could run and rerun Dijkstra's algorithm.
 
